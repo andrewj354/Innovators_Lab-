@@ -1,0 +1,23 @@
+# Віртуальне середовище
+venv/
+.env
+
+# Логи
+*.log
+django.log
+security.log
+debug.log
+
+# Бази даних
+db.sqlite3
+
+# Медіа файли
+media/
+
+# IDE та редактори
+.vscode/
+.idea/
+
+# Кеші Python
+__pycache__/
+*.pyc
