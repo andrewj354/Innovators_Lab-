@@ -1,50 +1,46 @@
-# services.py
-import redis
 from random import randint
-from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import send_mail
+from django.conf import settings
 
-
-# Підключення до Redis
-r = redis.StrictRedis(
-    host=getattr(settings, "REDIS_HOST", "localhost"),
-    port=getattr(settings, "REDIS_PORT", 6379),
-    db=0,
-    decode_responses=True
-)
 
 def code_generate():
     """Генерує 6-значний код 2FA"""
     return f"{randint(100000, 999999)}"
 
+
 def set_2fa_code(user_id):
-    """Зберігає код 2FA у Redis на 5 хвилин"""
+    if cache.get(f"2fa_block:{user_id}"):
+        raise Exception("Too many requests")
+
     code = code_generate()
-    key = f"2fa:{user_id}"
-    r.setex(key, 300, code) 
+    cache.set(f"2fa:{user_id}", code, timeout=300)
+    cache.set(f"2fa_block:{user_id}", True, timeout=60)  # 1 хв cooldown
     return code
 
+
 def verify_2fa_code(user_id, code):
-    """Перевіряє код 2FA та видаляє його після успішної перевірки"""
+    """Перевіряє код і видаляє після використання"""
     key = f"2fa:{user_id}"
-    stored_code = r.get(key)
-    if stored_code == code:
-        r.delete(key)
+    stored_code = cache.get(key)
+
+    if stored_code and stored_code == code:
+        cache.delete(key)
         return True
+
     return False
 
+
 def send_code(email, code):
-    # subject = "Your 2FA Code"
-    # message = f"Your verification code is: {code}"
+    """Відправка 2FA коду на email"""
 
-    # send_mail(
-    #     subject,
-    #     message,
-    #     None,          # from email (візьме DEFAULT_FROM_EMAIL)
-    #     [email],
-    #     fail_silently=False,
-    # )
+    subject = "Your 2FA Code"
+    message = f"Your verification code is: {code}"
 
-    print(f"{email} - {code}")
-
-
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+        fail_silently=False,
+    )
