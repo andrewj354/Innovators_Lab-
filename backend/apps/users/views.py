@@ -21,7 +21,17 @@ class MeView(APIView):
     def get(self, request):
         serializer = UserResponseSerializer(request.user)
         return Response(serializer.data)
-    
+
+    def patch(self, request):
+        serializer = UserResponseSerializer(
+            request.user,
+            data=request.data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
 # Вью для реєстрації користувача
 class RegisterView(APIView):
