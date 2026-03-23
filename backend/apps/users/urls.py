@@ -1,9 +1,13 @@
 from django.urls import path
-from .views import RegisterView, LoginView, Verify2FAView,MeView
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import RegisterView, LoginView, Verify2FAView, MeView
 
 urlpatterns = [
-    path('register/', RegisterView.as_view(), name='user-register'),
-    path('login/', LoginView.as_view(), name='user-login'),
-    path('verify-2fa/', Verify2FAView.as_view(), name='verify-2fa'),
+    path('register/', RegisterView.as_view()),
+    path('login/', LoginView.as_view()),
+    path('verify-2fa/', Verify2FAView.as_view()),
     path('me/', MeView.as_view()),
+
+    # JWT refresh
+    path('token/refresh/', TokenRefreshView.as_view()),
 ]
