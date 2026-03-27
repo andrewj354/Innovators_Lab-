@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
 from .services import code_generate, send_code
 from .models import CustomUser
 from .serializers import (
@@ -11,6 +10,32 @@ from .serializers import (
     UserResponseSerializer
 )
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import redirect
+from social_django.utils import psa
+from django.contrib.auth import login
+
+
+
+class GoogleLoginView(APIView):
+    def get(self, request):
+        return redirect('/login/google-oauth2/')  # URL з social-auth
+
+
+class GoogleCallbackView(APIView):
+    @psa('social:complete')
+    def get(self, request):
+        user = request.backend.do_auth(request.GET.get('code'))
+        if user and user.is_active:
+            login(request, user)
+            return Response({
+                "message": "Успішний логін через Google",
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "username": user.username,
+                }
+            })
+        return Response({"error": "Не вдалося авторизуватися через Google"}, status=400)
 
 
 

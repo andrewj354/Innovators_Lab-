@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.tasks',
     'apps.submissions',
     'apps.jury',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,16 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',  # Google OAuth2
+    'django.contrib.auth.backends.ModelBackend',  # стандартна авторизація
+)
+
+# Налаштування ключів через .env
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('GOOGLE_OAUTH2_KEY', default='')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('GOOGLE_OAUTH2_SECRET', default='')
+
+LOGIN_URL = '/api/auth/google/'
+LOGIN_REDIRECT_URL = '/api/auth/google/callback/'
