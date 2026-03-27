@@ -1,33 +1,31 @@
 from django.db import models
-from django.conf import settings
-
-
-
+from django.utils import timezone
 
 class Tournament(models.Model):
-    class Status(models.TextChoices):
-        DRAFT = 'Draft', 'Чорновик'
-        REGISTRATION = 'Registration', 'Реєстрація'
-        RUNNING = 'Running', 'Триває'
-        FINISHED = 'Finished', 'Завершено'
+    STATUS_CHOICES = [
+        ('Draft', 'Draft'),
+        ('Registration', 'Registration'),
+        ('Running', 'Running'),
+        ('Finished', 'Finished'),
+    ]
 
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     reg_start = models.DateTimeField()
     reg_end = models.DateTimeField()
-    max_teams = models.PositiveIntegerField()
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.DRAFT
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='tournaments'
-    )
+    max_teams = models.IntegerField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Draft')
+    created_by = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.title} ({self.status})"
+    def update_status(self):
+        now = timezone.now()
+
+        if self.status == 'Draft' and now >= self.reg_start:
+            self.status = 'Registration'
+        elif self.status == 'Registration' and now >= self.reg_end:
+            self.status = 'Running'
+        elif self.status == 'Running' and now > self.reg_end:  
+            self.status = 'Finished'
+
+        self.save(update_fields=['status'])

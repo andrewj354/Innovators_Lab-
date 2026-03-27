@@ -40,3 +40,18 @@ class TournamentDetailSerializer(serializers.ModelSerializer):
             'id', 'title', 'description', 'reg_start',
             'reg_end', 'status', 'max_teams', 'teams'
         ]
+
+
+
+class TournamentStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = ['status']
+
+    def validate_status(self, value):
+        current_status = self.instance.status
+        order = ['Draft', 'Registration', 'Running', 'Finished']
+
+        if order.index(value) < order.index(current_status):
+            raise serializers.ValidationError("Неможливо змінити статус назад")
+        return value
