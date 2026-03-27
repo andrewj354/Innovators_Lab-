@@ -14,6 +14,14 @@ class TournamentCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_by']  
 
 
+class TournamentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = [
+            'id', 'title', 'description', 'reg_start', 'reg_end',
+            'max_teams', 'status', 'created_by', 'created_at'
+        ]
+        read_only_fields = ['created_by', 'created_at']
 
 # Публічний список турнірів
 class TournamentListSerializer(serializers.ModelSerializer):
