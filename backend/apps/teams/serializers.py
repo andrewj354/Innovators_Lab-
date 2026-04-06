@@ -85,3 +85,11 @@ class TeamRegisterSerializer(serializers.ModelSerializer):
             TeamMember.objects.bulk_create(member_instances)
 
         return team
+    
+class TeamDetailSerializer(serializers.ModelSerializer):
+    members = TeamMemberSerializer(many=True, read_only=True)
+    tournament_title = serializers.ReadOnlyField(source='tournament.title')
+
+    class Meta:
+        model = Team
+        fields = '__all__' # Адмін бачить усі технічні поля (id, registered_at тощо)
