@@ -62,3 +62,22 @@ class Task(models.Model):
             
         self.full_clean() # Викликає clean() для перевірки логіки
         super().save(*args, **kwargs)
+
+
+class TaskRequirement(models.Model):
+    task = models.ForeignKey(
+        Task, 
+        on_delete=models.CASCADE, 
+        related_name='requirements',
+        verbose_name="Завдання"
+    )
+    title = models.CharField(max_length=255, verbose_name="Назва вимоги (пункт чек-листа)")
+    is_required = models.BooleanField(default=True, verbose_name="Обов'язково")
+
+    class Meta:
+        verbose_name = "Вимога завдання"
+        verbose_name_plural = "Вимоги завдання"
+
+    def __str__(self):
+        prefix = "[REQ]" if self.is_required else "[OPT]"
+        return f"{prefix} {self.title}"
