@@ -1,6 +1,6 @@
 from django.db import models
-from django.conf import settings
-from apps.tournaments.models import Tournament
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class TaskStatus(models.TextChoices):
     DRAFT = 'draft', 'Draft'
@@ -9,41 +9,56 @@ class TaskStatus(models.TextChoices):
     EVALUATED = 'evaluated', 'Evaluated'
 
 class Task(models.Model):
-    tournament = models.ForeignKey(
-        Tournament, 
-        on_delete=models.CASCADE, 
-        related_name='tasks',
-        verbose_name="Турнір"
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL, 
-        null=True,
-        related_name='created_tasks',
-        verbose_name="Автор"
-    )
-    
-    title = models.CharField(max_length=255, verbose_name="Назва завдання")
-    description = models.TextField(verbose_name="Опис")
-    tech_requirements = models.TextField(verbose_name="Технічні вимоги")
-    
-    start_time = models.DateTimeField(verbose_name="Час початку")
-    deadline = models.DateTimeField(verbose_name="Дедлайн")
-    
+    # ... ваші попередні поля (title, start_time, deadline і т.д.) ...
     status = models.CharField(
         max_length=20,
         choices=TaskStatus.choices,
-        default=TaskStatus.DRAFT,
-        verbose_name="Статус"
+        default=TaskStatus.DRAFT
     )
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        verbose_name = "Завдання"
-        verbose_name_plural = "Завдання"
-        ordering = ['start_time']
+    # Порядок статусів для валідації "тільки вперед"
+    STATUS_ORDER = {
+        TaskStatus.DRAFT: 1,
+        TaskStatus.ACTIVE: 2,
+        TaskStatus.SUBMISSION_CLOSED: 3,
+        TaskStatus.EVALUATED: 4,
+    }
 
-    def __str__(self):
-        return f"{self.title} ({self.get_status_display()})"
+    def get_actual_status(self):
+        """
+        Метод для визначення статусу на основі часу.
+        Якщо статус вже 'Evaluated', ми його не змінюємо автоматично.
+        """
+        if self.status == TaskStatus.EVALUATED:
+            return TaskStatus.EVALUATED
+            
+        now = timezone.now()
+        
+        if now >= self.deadline:
+            return TaskStatus.SUBMISSION_CLOSED
+        if now >= self.start_time:
+            return TaskStatus.ACTIVE
+            
+        return self.status
+
+    def clean(self):
+        """
+        Валідація переходів статусу.
+        """
+        if self.pk:
+            old_task = Task.objects.get(pk=self.pk)
+            old_order = self.STATUS_ORDER.get(old_task.status, 0)
+            new_order = self.STATUS_ORDER.get(self.status, 0)
+
+            if new_order < old_order:
+                raise ValidationError(
+                    f"Не можна змінити статус з {old_task.status} назад на {self.status}."
+                )
+
+    def save(self, *args, **kwargs):
+        # Оновлюємо статус перед збереженням, якщо він ще не фінальний
+        if self.status != TaskStatus.EVALUATED:
+            self.status = self.get_actual_status()
+            
+        self.full_clean() # Викликає clean() для перевірки логіки
+        super().save(*args, **kwargs)
