@@ -1,0 +1,48 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.logo { margin-bottom: 20px; }
+.logo img { width: 80px; height: auto; }
+
+.login-container h2 {
+  font-size: 18px; color: #333; margin-bottom: 30px; font-weight: normal;
+}
+
+.input-group { margin-bottom: 15px; }
+
+.input-group input {
+  width: 100%; padding: 15px; box-sizing: border-box;
+  border: 1px solid #555; border-radius: 4px;
+  background-color: #e0fcfb; font-size: 14px; outline: none;
+}
+.input-group input::placeholder { color: #333; }
+
+.btn-login {
+  width: 100%; padding: 15px; background-color: #00c3df; color: white;
+  border: none; border-radius: 6px; font-size: 16px; cursor: pointer;
+  margin-top: 10px; margin-bottom: 25px; transition: background-color 0.3s;
+}
+.btn-login:hover { background-color: #00a8c1; }
+
+.links-text { font-size: 12px; color: #333; margin-bottom: 15px; }
+.links-text a { color: #00c3df; text-decoration: none; }
+.links-text a.bold { font-weight: bold; color: #000; }
+
+.btn-google {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 10px; background-color: transparent;
+  border: none; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 20px;
+}
+.btn-google img { width: 24px; margin-right: 10px; }
