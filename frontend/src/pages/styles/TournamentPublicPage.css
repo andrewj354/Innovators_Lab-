@@ -1,0 +1,102 @@
+.public-page {
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* Hero Section */
+.tournament-hero {
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 40px;
+}
+
+.hero-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+  color: white;
+}
+
+.hero-container h1 { font-size: 42px; margin: 10px 0; }
+
+.status-tag {
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+}
+.status-tag.активний { background: #1eb564; }
+.status-tag.майбутній { background: #f5a623; }
+
+/* Grid Layout */
+.content-grid {
+  max-width: 1100px;
+  margin: -30px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 30px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.info-block {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.info-block h2 { color: #004d61; margin-bottom: 20px; font-size: 20px; border-left: 4px solid #00c3df; padding-left: 15px; }
+
+/* Sidebar Card */
+.registration-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 20px;
+}
+
+.date-info { margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 8px; }
+.date-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+
+.btn-register { width: 100%; background: #00c3df; padding: 15px; font-size: 16px; font-weight: bold; }
+
+.reg-closed-msg {
+  background: #eee;
+  color: #777;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Teams List */
+.teams-list { display: flex; flex-direction: column; gap: 10px; }
+.team-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+.team-item:hover { transform: translateX(5px); background: #f0fdfa; }
+.team-rank { width: 30px; font-weight: bold; color: #999; }
+.team-item img { width: 32px; height: 32px; border-radius: 50%; margin: 0 15px; }
