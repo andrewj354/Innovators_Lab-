@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../pages/styles/LoginPage.css'; // той самий CSS
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { register } from '../api/auth';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -66,28 +67,17 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          email: form.email,
-          password: form.password,
-        }),
+      await register({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        password: form.password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed. Please try again.');
-      }
 
       // Після успішної реєстрації — редирект на логін
       navigate('/login');
-
     } catch (err) {
-      setApiError(err.message);
+      setApiError(err.response?.data?.message || err.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
