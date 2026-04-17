@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import Verify2FA from "./pages/Verify2FA";
+import RegisterPage from './pages/RegisterPage';
+
 
 function App() {
   return (
