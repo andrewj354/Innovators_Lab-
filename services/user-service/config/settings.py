@@ -4,7 +4,11 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-kb-m$hl^aacxe^&tor%3q30+9v2amm&z@+40jt7vd4ds@jso#p'
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
@@ -24,8 +28,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    # 'apps.users',
-    # 'apps.authentication',
+    'apps.users',
+    #'apps.auth',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -62,7 +66,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR.parent.parent / 'databases' / 'user.db',
+        'NAME': BASE_DIR / 'databases' / 'user.db',
     }
 }
 
