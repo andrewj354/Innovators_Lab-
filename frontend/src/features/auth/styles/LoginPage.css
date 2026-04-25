@@ -13,7 +13,6 @@
   text-align: center;
 }
 
-/* Logo */
 .logo {
   display: flex;
   justify-content: center;
@@ -25,7 +24,6 @@
   height: auto;
 }
 
-/* Heading */
 .login-container h2 {
   font-size: 18px;
   color: #333;
@@ -33,7 +31,6 @@
   font-weight: 400;
 }
 
-/* Input groups */
 .input-group {
   margin-bottom: 15px;
 }
@@ -78,7 +75,6 @@
   margin-top: 4px;
 }
 
-/* Login button */
 .btn-login {
   width: 100%;
   padding: 15px;
@@ -113,7 +109,6 @@
   box-shadow: none;
 }
 
-/* Links */
 .links-text {
   font-size: 13px;
   color: #555;
@@ -159,7 +154,6 @@
   color: #000;
 }
 
-/* Google button */
 .btn-google {
   display: flex;
   align-items: center;

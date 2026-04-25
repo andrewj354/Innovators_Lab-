@@ -1,9 +1,6 @@
 import axios from 'axios';
 
-/**
- * Єдиний axios instance для всього додатку.
- * Auth та Tournament API модулі імпортують цей клієнт.
- */
+
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   withCredentials: true,
