@@ -1,0 +1,108 @@
+.dashboard-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 800px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0fcfb;
+  padding-bottom: 15px;
+}
+
+.dashboard-header h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.dashboard-header p {
+  font-size: 14px;
+  color: #666;
+}
+
+.work-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: transform 0.2s;
+}
+
+.work-card:hover {
+  transform: translateY(-2px);
+  border-color: #00c3df;
+}
+
+.team-name {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.links-group .link-item {
+  font-size: 13px;
+  color: #00c3df;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.links-group .link-item:hover {
+  text-decoration: underline;
+}
+
+.work-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Стилі бейджів */
+.badge {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.badge.rated {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge.not_rated {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.btn-review {
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+  background-color: #00c3df;
+  color: white;
+  border-radius: 4px;
+}
+
+.error-access {
+  color: #d32f2f;
+  text-align: center;
+  padding: 50px;
+  font-weight: bold;
+}
