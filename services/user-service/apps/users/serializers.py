@@ -1,51 +1,45 @@
 from rest_framework import serializers
-from .models import User,UserProfile
+from .models import User, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','email','username','first_name','last_name',
-                  'is_active','date_joined']
+        fields = ['id', 'email', 'username', 'first_name', 'last_name',
+                  'role', 'is_active', 'date_joined']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['phone','address','dare_of_birth']
+        fields = ['phone', 'address', 'date_of_birth']
 
 
-class UserWithProfileSeializer(serializers.ModelSerializer):
+class UserWithProfileSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id','email','username','first_name','last_name',
-                  'is_active','date_joined','profile']
-
-
+        fields = ['id', 'email', 'username', 'first_name', 'last_name',
+                  'role', 'is_active', 'date_joined', 'profile']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True,min_length=8)
+    password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True)
-
 
     class Meta:
         model = User
-        fields = ['email','username','first_name','last_name','password','confirm_password']
+        fields = ['email', 'username', 'first_name', 'last_name',
+                  'role', 'password', 'password_confirm']
 
-
-
-    def validate(self,attrs):
+    def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
-            raise serializers.ValidationError('Password do not match')
+            raise serializers.ValidationError({'password': 'Паролі не збігаються'})
         return attrs
-    
-    
-    def create(self,validated_data):
+
+    def create(self, validated_data):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
         UserProfile.objects.create(user=user)
         return user
-    
