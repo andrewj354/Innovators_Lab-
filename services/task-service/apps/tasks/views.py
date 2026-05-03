@@ -33,7 +33,6 @@ class TaskRequirementViewSet(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
-# views.py
 from .serializers import TaskRequirementSerializer, AdminSubmissionSerializer
 
 class TaskViewSet(viewsets.GenericViewSet):
@@ -55,4 +54,31 @@ class TaskViewSet(viewsets.GenericViewSet):
         submissions = task.submissions.all() 
         
         serializer = AdminSubmissionSerializer(submissions, many=True)
+        return Response(serializer.data)
+    
+
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+
+    @action(
+        detail=True, 
+        methods=['get'], 
+        url_path='submissions',
+        permission_classes=[permissions.IsAdminUser] 
+    )
+    def submissions(self, request, pk=None):
+        """
+        GET /api/tasks/{id}/submissions/
+        Виводить всі роботи учасників для цього завдання.
+        """
+        task = self.get_object()
+        
+        task.update_status_by_time()
+        
+        submissions = task.submissions.all() 
+        serializer = AdminSubmissionListSerializer(submissions, many=True)
         return Response(serializer.data)

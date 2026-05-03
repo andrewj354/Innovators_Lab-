@@ -19,3 +19,17 @@ class AdminSubmissionSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         return "Submitted" if not obj.is_locked else "Locked"
+    
+
+
+class AdminSubmissionListSerializer(serializers.ModelSerializer):
+    team = serializers.IntegerField(source='team_id')
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Submission
+        fields = ['github_url', 'video_url', 'team', 'status', 'submitted_at']
+
+    def get_status(self, obj):
+        # Можна додати складнішу логіку, якщо є оцінки
+        return "Submitted" if not obj.is_locked else "Finalized"
