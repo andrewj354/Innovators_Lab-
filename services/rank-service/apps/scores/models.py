@@ -50,3 +50,27 @@ class Score(models.Model):
             self.functionality, self.usability
         ]
         return sum(scores) / len(scores)
+    
+
+from django.conf import settings
+
+class JuryAssignment(models.Model):
+    submission = models.ForeignKey(
+        'Submission', 
+        on_delete=models.CASCADE, 
+        related_name='assignments',
+        verbose_name="Робота"
+    )
+
+    jury_user_id = models.IntegerField(db_index=True, verbose_name="ID Судді")
+    
+    is_evaluated = models.BooleanField(default=False, verbose_name="Оцінено")
+    assigned_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата призначення")
+
+    class Meta:
+        verbose_name = "Призначення журі"
+        verbose_name_plural = "Призначення журі"
+        unique_together = ('submission', 'jury_user_id')
+
+    def __str__(self):
+        return f"Jury {self.jury_user_id} -> Submission {self.submission_id}"
