@@ -1,0 +1,82 @@
+.admin-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 40px 20px;
+}
+
+.admin-container {
+  width: 100%;
+  max-width: 800px; /* Ширше для таблиці */
+  padding: 40px;
+  background-color: white;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.logo { margin-bottom: 20px; }
+.logo img { width: 80px; height: auto; }
+
+.admin-container h2 {
+  font-size: 24px; color: #333; margin-bottom: 5px; font-weight: normal;
+}
+
+.subtitle {
+  font-size: 14px; color: #777; margin-bottom: 30px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 30px;
+}
+
+.submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.submissions-table th {
+  padding: 12px;
+  border-bottom: 2px solid #555;
+  color: #333;
+}
+
+.submissions-table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #eee;
+  background-color: #e0fcfb; /* Тот самий фірмовий колір */
+}
+
+/* Колір посилань як у прикладі */
+.link-cyan {
+  color: #00c3df;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.link-cyan:hover { text-decoration: underline; }
+
+.bold { font-weight: bold; }
+
+/* Кнопка Review у стилі btn-login */
+.btn-review {
+  padding: 8px 15px;
+  background-color: #00c3df;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-review:hover { background-color: #00a8c1; }
+
+.links-text { font-size: 12px; color: #333; margin-top: 20px; }
+.links-text a { color: #00c3df; text-decoration: none; }

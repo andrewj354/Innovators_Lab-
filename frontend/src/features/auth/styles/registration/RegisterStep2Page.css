@@ -1,0 +1,45 @@
+.avatar-upload {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.avatar-upload:hover {
+  border-color: #00c3df;
+  box-shadow: 0 0 0 3px rgba(0, 195, 223, 0.12);
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.date-input {
+  cursor: pointer;
+  color-scheme: light;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
