@@ -1,10 +1,49 @@
-from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
-from .models import Task, TaskRequirement
+from .models import Task, TaskRequirement, TaskStatus
 from .serializers import TaskRequirementSerializer
+from rest_framework import viewsets, permissions, status
+
+from .serializers import TaskSerializer
+
+class TaskAdminViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        tournament_id = self.kwargs.get('tournament_id')
+        if tournament_id:
+            return self.queryset.filter(tournament_id=tournament_id)
+        return self.queryset
+
+    def perform_create(self, serializer):
+        serializer.save(
+            created_by=self.request.user.id,
+            tournament_id=self.kwargs.get('tournament_id')
+        )
+
+    # PATCH /api/tasks/{id}/status/
+    @action(detail=True, methods=['patch'], url_path='status')
+    def change_status(self, request, pk=None):
+        task = self.get_object()
+        new_status = request.data.get('status')
+        
+        if not new_status or new_status not in TaskStatus.values:
+            return Response(
+                {"error": "Invalid status"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        task.status = new_status
+        try:
+            task.save() 
+            return Response(self.get_serializer(task).data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class TaskRequirementViewSet(viewsets.GenericViewSet):
     queryset = TaskRequirement.objects.all()

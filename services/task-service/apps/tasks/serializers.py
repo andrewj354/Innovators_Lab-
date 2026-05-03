@@ -1,6 +1,18 @@
 from rest_framework import serializers
 from .models import TaskRequirement
 from apps.submission.models import Submission
+from .models import Task, TaskStatus
+
+class TaskSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = Task
+        fields = [
+            'id', 'tournament_id', 'created_by', 'title', 'description', 
+            'tech_requirements', 'start_time', 'deadline', 'status', 'status_display'
+        ]
+        read_only_fields = ['id', 'created_by']
 
 
 class TaskRequirementSerializer(serializers.ModelSerializer):
