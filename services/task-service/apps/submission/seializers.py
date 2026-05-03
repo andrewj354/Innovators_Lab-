@@ -9,3 +9,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'live_demo_url', 'description', 'is_locked', 'submitted_at'
         ]
         read_only_fields = ['id', 'is_locked', 'submitted_at']
+
+
+

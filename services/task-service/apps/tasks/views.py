@@ -31,3 +31,28 @@ class TaskRequirementViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(task=task)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+# views.py
+from .serializers import TaskRequirementSerializer, AdminSubmissionSerializer
+
+class TaskViewSet(viewsets.GenericViewSet):
+    queryset = Task.objects.all()
+    
+    def get_permissions(self):
+        if self.action == 'submissions':
+            return [IsAdminUser()] 
+        return [IsAdminUser()]
+
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminUser])
+    def submissions(self, request, pk=None):
+        """
+        Повертає всі роботи (submissions) для конкретного завдання.
+        Доступно тільки Admin/Jury.
+        """
+        task = self.get_object()
+        submissions = task.submissions.all() 
+        
+        serializer = AdminSubmissionSerializer(submissions, many=True)
+        return Response(serializer.data)

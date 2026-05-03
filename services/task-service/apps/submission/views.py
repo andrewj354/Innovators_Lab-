@@ -19,7 +19,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     def submit_work(self, request, task_id=None):
         task = get_object_or_404(Task, pk=task_id)
         
-        if task.status == TaskStatus.SUBMISSION_CLOSED or timezone.now() > task.deadline:
+        if task.status == TaskStatus.SUBMISSION_CLOSEфD or timezone.now() > task.deadline:
             return Response(
                 {"error": "Прийом робіт закритий (дедлайн минув)."}, 
                 status=status.HTTP_403_FORBIDDEN
