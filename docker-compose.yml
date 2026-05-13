@@ -1,0 +1,179 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: innovators_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: innovators_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - innovators_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: innovators_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - innovators_network
+
+  # API Gateway (Port 8000)
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: innovators_gateway
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/innovators_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./api-gateway:/app
+    networks:
+      - innovators_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # User Service (Port 8001)
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: innovators_user_service
+    command: python manage.py runserver 0.0.0.0:8001
+    ports:
+      - "8001:8001"
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/user-service:/app
+    networks:
+      - innovators_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/auth/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Tournament Service (Port 8003)
+  tournament-service:
+    build:
+      context: ./services/tournament-service
+      dockerfile: Dockerfile
+    container_name: innovators_tournament_service
+    command: python manage.py runserver 0.0.0.0:8003
+    ports:
+      - "8003:8003"
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tournament_db
+      - REDIS_URL=redis://redis:6379/2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/tournament-service:/app
+    networks:
+      - innovators_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/api/tournaments/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Submission Service (Port 8002)
+  submission-service:
+    build:
+      context: ./services/submission-service
+      dockerfile: Dockerfile
+    container_name: innovators_submission_service
+    command: python manage.py runserver 0.0.0.0:8002
+    ports:
+      - "8002:8002"
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/submission_db
+      - REDIS_URL=redis://redis:6379/3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/submission-service:/app
+    networks:
+      - innovators_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/api/tasks/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (Port 3000)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: innovators_frontend
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://api-gateway:8000
+    depends_on:
+      - api-gateway
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - innovators_network
+
+volumes:
+  postgres_data:
+
+networks:
+  innovators_network:
+    driver: bridge
