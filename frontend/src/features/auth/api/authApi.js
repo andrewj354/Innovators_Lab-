@@ -5,60 +5,56 @@
 import client from '../../../shared/api/client';
 
 export const register = async (data) => {
-  // MOCK: Імітуємо успішну реєстрацію з затримкою
-  return new Promise((resolve) => setTimeout(() => resolve({ success: true }), 800));
-
-  // REAL API (закоментовано поки немає бекенду):
-  // const response = await client.post('/auth/register', data);
-  // return response.data;
+  const response = await client.post('/auth/register/', data);
+  return response.data;
 };
 
 export const login = async (data) => {
-  // MOCK: Імітуємо успішний логін
-  return new Promise((resolve) => setTimeout(() => {
-    localStorage.setItem('accessToken', 'mock-token-123');
-    resolve({ accessToken: 'mock-token-123' });
-  }, 800));
-
-  // REAL API:
-  // const response = await client.post('/auth/login', data);
-  // if (response.data.accessToken) {
-  //   localStorage.setItem('accessToken', response.data.accessToken);
-  // }
-  // return response.data;
+  const response = await client.post('/auth/login/', data);
+  if (response.data.access) {
+    localStorage.setItem('accessToken', response.data.access);
+  }
+  if (response.data.refresh) {
+    localStorage.setItem('refreshToken', response.data.refresh);
+  }
+  return response.data;
 };
 
 export const logout = async () => {
-  // MOCK:
   localStorage.removeItem('accessToken');
-
-  // REAL API:
+  localStorage.removeItem('refreshToken');
+  // Optional: call logout endpoint if backend supports it
   // await client.post('/auth/logout');
-  // localStorage.removeItem('accessToken');
 };
 
 export const refreshToken = async () => {
-  const response = await client.post('/auth/token/refresh');
-  if (response.data.accessToken) {
-    localStorage.setItem('accessToken', response.data.accessToken);
+  const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) {
+    throw new Error('No refresh token available');
+  }
+  const response = await client.post('/auth/refresh/', {
+    refresh: refreshToken
+  });
+  if (response.data.access) {
+    localStorage.setItem('accessToken', response.data.access);
+  }
+  if (response.data.refresh) {
+    localStorage.setItem('refreshToken', response.data.refresh);
   }
   return response.data;
 };
 
 export const forgotPassword = async (email) => {
-  // MOCK: Імітуємо відправку листа
-  return new Promise((resolve) => setTimeout(() => resolve({ success: true }), 800));
-
-  // REAL API:
-  // const response = await client.post('/auth/forgot-password', { email });
-  // return response.data;
+  const response = await client.post('/auth/forgot-password/', { email });
+  return response.data;
 };
 
 export const resetPassword = async (data) => {
-  // MOCK: Імітуємо зміну паролю
-  return new Promise((resolve) => setTimeout(() => resolve({ success: true }), 800));
+  const response = await client.post('/auth/reset-password/', data);
+  return response.data;
+};
 
-  // REAL API:
-  // const response = await client.post('/auth/reset-password', data);
-  // return response.data;
+export const getMe = async () => {
+  const response = await client.get('/auth/me/');
+  return response.data;
 };

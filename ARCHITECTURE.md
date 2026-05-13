@@ -6,14 +6,12 @@
 
 ```
 API Gateway (Port 8000)
-    ├── User Service (Port 8004)
-    ├── Tournament Service (Port 8001)
-    ├── Submission Service (Port 8002)
-    ├── Product Service (Port 8001)
-    ├── Cart Service (Port 8002)
-    └── Order Service (Port 8003)
+    ├── User Service (Port 8001)
+    ├── Task Service (Port 8002)
+    ├── Tournament Service (Port 8003)
+    └── Submission Service (Port 8002)
 
-Frontend (Vue.js, Port 3000)
+Frontend (React, Port 5173 dev / 3000 production)
 ```
 
 ## 🏗️ Мікросервіси
@@ -85,7 +83,20 @@ pip install -r requirements.txt
 echo "DB_NAME=user_db" > .env
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 8004
+python manage.py runserver 8001
+```
+
+### Встановлення Task Service (Submissions & Jury & Leaderboard)
+```bash
+cd services/submission-service
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+echo "DB_NAME=task_db" > .env
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver 8002
 ```
 
 ### Встановлення Tournament Service
@@ -98,7 +109,7 @@ pip install -r requirements.txt
 echo "DB_NAME=tournament_db" > .env
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 8001
+python manage.py runserver 8003
 ```
 
 ### Встановлення Submission Service

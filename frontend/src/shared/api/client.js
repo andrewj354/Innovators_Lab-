@@ -46,10 +46,16 @@ client.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await client.post('/auth/token/refresh');
-        localStorage.setItem('accessToken', data.accessToken);
-        client.defaults.headers.Authorization = `Bearer ${data.accessToken}`;
-        processQueue(null, data.accessToken);
+        const refreshToken = localStorage.getItem('refreshToken');
+        const { data } = await client.post('/auth/refresh/', {
+          refresh: refreshToken
+        });
+        localStorage.setItem('accessToken', data.access);
+        if (data.refresh) {
+          localStorage.setItem('refreshToken', data.refresh);
+        }
+        client.defaults.headers.Authorization = `Bearer ${data.access}`;
+        processQueue(null, data.access);
         return client(original);
       } catch (refreshError) {
         processQueue(refreshError, null);
