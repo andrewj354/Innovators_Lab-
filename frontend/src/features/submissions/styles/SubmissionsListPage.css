@@ -1,0 +1,158 @@
+.submissions-list-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.list-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 2em;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+}
+
+.empty-state p {
+  margin: 0 0 20px 0;
+  color: #9ca3af;
+  font-size: 1.2em;
+}
+
+.submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.submissions-table thead {
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.submissions-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submissions-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.submissions-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.submissions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge.active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge.locked {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.link-action {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.link-action:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .list-header h1 {
+    font-size: 1.5em;
+    order: 2;
+  }
+
+  .list-header button,
+  .list-header a {
+    order: 1;
+  }
+
+  .submissions-table {
+    font-size: 0.9em;
+  }
+
+  .submissions-table th,
+  .submissions-table td {
+    padding: 10px;
+  }
+}

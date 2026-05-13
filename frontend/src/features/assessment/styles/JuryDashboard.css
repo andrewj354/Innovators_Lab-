@@ -1,33 +1,153 @@
-.dashboard-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
-
-.dashboard-container {
-  width: 100%;
-  max-width: 800px;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+.jury-dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 30px;
-  border-bottom: 2px solid #e0fcfb;
-  padding-bottom: 15px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 20px;
 }
 
-.dashboard-header h2 {
-  font-size: 24px;
-  color: #333;
+.dashboard-header h1 {
   margin: 0;
+  font-size: 2em;
 }
 
-.dashboard-header p {
+.header-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #6b7280;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: #3b82f6;
+}
+
+.tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+  color: #9ca3af;
+}
+
+.assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.assignments-table thead {
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.assignments-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.assignments-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.assignments-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.assignments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.assignments-table tbody tr.evaluated {
+  opacity: 0.7;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge.evaluated {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.link-action {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.link-action:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
   font-size: 14px;
   color: #666;
 }
