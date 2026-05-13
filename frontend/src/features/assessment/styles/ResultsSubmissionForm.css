@@ -1,0 +1,90 @@
+.submission-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+.submission-container {
+  width: 100%;
+  max-width: 450px;
+  padding: 40px 25px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.logo { margin-bottom: 20px; }
+.logo img { width: 80px; }
+
+.submission-container h2 {
+  font-size: 18px; 
+  color: #333; 
+  margin-bottom: 30px; 
+  font-weight: normal;
+}
+
+.status-badge.locked {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  border: 1px solid #ffcdd2;
+}
+
+.input-group { 
+  margin-bottom: 15px; 
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+/* Стилізація інпутів у твоєму стилі */
+.input-group input, 
+.custom-textarea {
+  width: 100%; 
+  padding: 15px; 
+  box-sizing: border-box;
+  border: 1px solid #555; 
+  border-radius: 4px;
+  background-color: #e0fcfb; 
+  font-size: 14px; 
+  outline: none;
+}
+
+.custom-textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.btn-submit {
+  width: 100%; 
+  padding: 15px; 
+  background-color: #00c3df; 
+  color: white;
+  border: none; 
+  border-radius: 6px; 
+  font-size: 16px; 
+  cursor: pointer;
+  margin-top: 10px; 
+  transition: background-color 0.3s;
+}
+
+.btn-submit:hover:not(:disabled) { 
+  background-color: #00a8c1; 
+}
+
+.btn-disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
