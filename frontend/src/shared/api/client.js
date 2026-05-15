@@ -2,7 +2,10 @@ import axios from 'axios';
 
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? '/api',
+  // Додаємо /api вручну, якщо його немає в env
+  baseURL: import.meta.env.VITE_API_URL.endsWith('/api') 
+    ? import.meta.env.VITE_API_URL 
+    : `${import.meta.env.VITE_API_URL}/api`,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });

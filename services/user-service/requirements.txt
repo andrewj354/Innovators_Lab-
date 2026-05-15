@@ -1,32 +1,44 @@
-amqp==5.3.1
-asgiref==3.9.1
-billiard==4.2.1
+# Core Framework & API
+Django==4.2.0
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+django-cors-headers==4.0.0
+
+# Database - PostgreSQL driver
+psycopg2-binary==2.9.6
+
+# Task Queue & Async
 celery==5.3.4
+redis==5.0.1
+kombu==5.3.4
+amqp==5.3.1
+billiard==4.2.1
+vine==5.1.0
+asgiref==3.9.1
+
+# Utilities
+python-decouple==3.8
+requests==2.31.0
+PyJWT==2.10.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+tzdata==2025.2
+sqlparse==0.5.3
+typing_extensions==4.15.0
+pyotp==2.9.0
+
+# HTTP & Security
 certifi==2025.8.3
 charset-normalizer==3.4.3
+idna==3.10
+urllib3==2.5.0
+
+# CLI & Interface
 click==8.2.1
 click-didyoumean==0.3.1
 click-plugins==1.1.1.2
 click-repl==0.3.0
-dj-database-url==2.1.0
-Django==5.2.5
-django-cors-headers==4.3.1
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.0
-idna==3.10
-kombu==5.3.4
 prompt_toolkit==3.0.52
-PyJWT==2.10.1
-python-dateutil==2.9.0.post0
-python-decouple==3.8
-pytz==2025.2
-redis==5.0.1
-requests==2.31.0
+wcwidth==0.2.13
 setuptools==80.9.0
 six==1.17.0
-sqlparse==0.5.3
-typing_extensions==4.15.0
-tzdata==2025.2
-urllib3==2.5.0
-vine==5.1.0
-wcwidth==0.2.13

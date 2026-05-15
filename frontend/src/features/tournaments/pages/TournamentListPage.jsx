@@ -1,140 +1,153 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import '../styles/TournamentListPage.css';
 import Button from '../../../shared/components/Button';
+import { getTournaments } from '../api/tournamentApi';
+import Navbar from '../../../shared/components/Navbar';
+import { useAuth } from '../../../shared/context/AuthContext';
 
 export default function TournamentListPage() {
-  const [activeFilter, setActiveFilter] = useState('Всі Турніри');
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [tournaments, setTournaments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const tournaments = [
-    {
-      id: 1,
-      game: 'CS2',
-      title: 'Весняний Чемпіонат по CS2',
-      status: 'активний',
-      regDate: '01.04.2024 - 15.04.2024',
-      image: 'https://via.placeholder.com/300x150?text=CS2',
-      btnText: 'Реєструватися'
-    },
-    {
-      id: 2,
-      game: 'League of Legends',
-      title: 'Ліга Геймерів League of Legends',
-      status: 'майбутній',
-      regDate: '10.05.2024 - 25.05.2024',
-      image: 'https://via.placeholder.com/300x150?text=LoL',
-      btnText: 'В очікуванні'
-    },
-    {
-      id: 3,
-      game: 'Dota 2',
-      title: 'Кубок України Dota 2',
-      status: 'завершений',
-      regDate: '15.02.2024 - 28.02.2024',
-      image: 'https://via.placeholder.com/300x150?text=Dota2',
-      btnText: 'Результати'
-    },
-    {
-        id: 4,
-        game: 'VALORANT',
-        title: 'Відкритий Турнір по Valorant',
-        status: 'активний',
-        regDate: '20.03.2024 - 10.04.2024',
-        image: 'https://via.placeholder.com/300x150?text=Valorant',
-        btnText: 'Реєструватися'
-      },
-      {
-        id: 5,
-        game: 'FORTNITE',
-        title: 'Фінал Сезону Fortnite',
-        status: 'майбутній',
-        regDate: '05.06.2024 - 20.06.2024',
-        image: 'https://via.placeholder.com/300x150?text=Fortnite',
-        btnText: 'В очікуванні'
-      }
+  useEffect(() => {
+    fetchTournaments();
+  }, []);
+
+  const fetchTournaments = async () => {
+    try {
+      setLoading(true);
+      const response = await getTournaments();
+      // API returns paginated response: {count, next, previous, results: [...]}
+      const tournamentData = response.data?.results || response.results || response.data || [];
+      setTournaments(Array.isArray(tournamentData) ? tournamentData : []);
+    } catch (err) {
+      setError(err.message);
+      toast.error('Не вдалось завантажити турніри');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  const getStatusBadgeColor = (status) => {
+    const statusMap = {
+      'draft': 'badge-draft',
+      'registration': 'badge-registration',
+      'running': 'badge-running',
+      'finished': 'badge-finished'
+    };
+    return statusMap[status] || 'badge-draft';
+  };
+
+  const filteredTournaments = tournaments.filter(t => {
+    const matchesFilter = activeFilter === 'all' || t.status === activeFilter;
+    const matchesSearch = t.title.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const filters = [
+    { value: 'all', label: 'Всі Турніри' },
+    { value: 'registration', label: 'Реєстрація' },
+    { value: 'running', label: 'Проводяться' },
+    { value: 'finished', label: 'Завершені' }
   ];
 
-  const filters = ['Реєстрація', 'Проводяться', 'Завершені', 'Всі Турніри'];
-
   return (
-    <div className="hub-wrapper">
-      {/* Навігаційна панель */}
-      <header className="hub-header">
-        <div className="header-content">
-          <div className="hub-logo">TOURNAMENT HUB</div>
-          <nav className="hub-nav">
-            <a href="#home">Головна</a>
-            <a href="#my">Мої Турніри</a>
-            <a href="#profile">Профіль</a>
-            <span className="lang-switch">UA/EN</span>
-            <div className="user-info">
-              <img src="https://via.placeholder.com/32" alt="Avatar" className="avatar" />
-              <span>Іван К.</span>
-            </div>
-          </nav>
-        </div>
-      </header>
+    <div className="page-wrapper">
+      <Navbar user={user} onLogout={handleLogout} />
 
-      <main className="hub-main">
-        <div className="content-container">
-          
-          {/* Основна частина з турнірами */}
-          <section className="tournaments-section">
-            <div className="section-header">
-              <h1>Список Турнірів</h1>
-              <div className="search-box">
-                <input type="text" placeholder="Пошук" />
-              </div>
+      <main className="page-main">
+        <div className="container">
+          <div className="page-header">
+            <h1>Турніри</h1>
+            <p className="page-subtitle">Переглядайте та участвуйте в турнірах</p>
+          </div>
+
+          {/* Search & Filters */}
+          <div className="controls-section">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="Пошук турніру..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
             </div>
 
-            <div className="filter-bar">
+            <div className="filter-chips">
               {filters.map(f => (
-                <button 
-                  key={f} 
-                  className={`filter-chip ${activeFilter === f ? 'active' : ''}`}
-                  onClick={() => setActiveFilter(f)}
+                <button
+                  key={f.value}
+                  className={`chip ${activeFilter === f.value ? 'active' : ''}`}
+                  onClick={() => setActiveFilter(f.value)}
                 >
-                  {f}
+                  {f.label}
                 </button>
               ))}
             </div>
+          </div>
 
+          {/* Content */}
+          {loading ? (
+            <div className="loading-state">
+              <p>Завантажуємо турніри...</p>
+            </div>
+          ) : error ? (
+            <div className="error-state">
+              <p>❌ Помилка: {error}</p>
+              <Button onClick={fetchTournaments}>Спробувати ще</Button>
+            </div>
+          ) : filteredTournaments.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">🏆</div>
+              <p>Турнірів не знайдено</p>
+              <small>Спробуйте змінити фільтр або пошуковий запит</small>
+            </div>
+          ) : (
             <div className="tournament-grid">
-              {tournaments.map(t => (
-                <div key={t.id} className="tournament-card">
-                  <div className="card-banner" style={{backgroundImage: `url(${t.image})`}}>
-                    <span className="game-label">{t.game}</span>
+              {filteredTournaments.map(tournament => (
+                <div key={tournament.id} className="tournament-card">
+                  <div className="card-image">
+                    <img
+                      src={tournament.image_url || 'https://via.placeholder.com/300x150'}
+                      alt={tournament.title}
+                    />
+                    <span className={`status-badge ${getStatusBadgeColor(tournament.status)}`}>
+                      {tournament.status}
+                    </span>
                   </div>
-                  <div className="card-body">
-                    <div className="title-row">
-                      <h3>{t.title}</h3>
-                      <span className={`status-badge ${t.status}`}>{t.status}</span>
+                  <div className="card-content">
+                    <h3>{tournament.title}</h3>
+                    <p className="card-description">{tournament.description}</p>
+                    <div className="card-meta">
+                      <span>👥 {tournament.registered_teams || 0} команд</span>
+                      <span>📊 Макс: {tournament.max_teams || '-'}</span>
                     </div>
-                    <p className="reg-info">Реєстрація: {t.regDate}</p>
                     <div className="card-actions">
-                      <Button className="btn-action">{t.btnText}</Button>
-                      <button className="btn-folder">📁</button>
+                      <Button
+                        onClick={() => navigate(`/tournaments/${tournament.id}`)}
+                        className="btn-primary"
+                      >
+                        Переглянути →
+                      </Button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
-
-          {/* Бокова панель Empty State */}
-          <aside className="empty-state-sidebar">
-            <h3>Empty State</h3>
-            <div className="sidebar-filters">
-              <span>Реєстрація</span>
-              <span>Проводяться</span>
-              <span className="active">Завершені</span>
-            </div>
-            <div className="empty-content">
-              <div className="empty-icon">🏆🔍</div>
-              <h4>Ой! Наразі завершених турнірів немає.</h4>
-              <p>Перевірте інші вкладки або поверніться пізніше.</p>
-            </div>
-          </aside>
-
+          )}
         </div>
       </main>
     </div>

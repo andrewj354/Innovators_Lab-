@@ -40,13 +40,7 @@ export const updateTournament = (tournamentId, tournamentData) => {
   return client.put(`/tournaments/${tournamentId}/`, tournamentData);
 };
 
-/**
- * Видалити турнір (Admin only)
- * @param {number} tournamentId - ID турніру
- */
-export const deleteTournament = (tournamentId) => {
-  return client.delete(`/tournaments/${tournamentId}/`);
-};
+
 
 // ─── Legacy mock exports for backward compatibility ───────────────────────────
 

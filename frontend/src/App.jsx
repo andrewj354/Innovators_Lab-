@@ -9,6 +9,9 @@ import ForgotPasswordPage from './features/auth/pages/password-reset/ForgotPassw
 import ForgotPasswordSentPage from './features/auth/pages/password-reset/ForgotPasswordSentPage';
 import ResetPasswordPage from './features/auth/pages/password-reset/ResetPasswordPage';
 
+// Dashboard
+import DashboardPage from './features/dashboard/pages/DashboardPage';
+
 // Tournament pages
 import TournamentListPage from './features/tournaments/pages/TournamentListPage';
 import TournamentFormPage from './features/tournaments/pages/TournamentFormPage';
@@ -30,8 +33,12 @@ import JuryAssignmentPage from './features/assessment/pages/JuryAssignmentPage';
 // Leaderboard pages
 import LeaderboardPage from './features/leaderboard/pages/LeaderboardPage';
 
-// Shared components
-import Navbar from "./components/Navbar";
+// Profile & Settings pages
+import ProfilePage from './features/profile/pages/ProfilePage';
+import SettingsPage from './features/settings/pages/SettingsPage';
+
+// Protected Route
+import ProtectedRoute from './shared/components/ProtectedRoute';
 
 function App() {
   return (
@@ -45,6 +52,12 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/forgot-password/sent" element={<ForgotPasswordSentPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* Dashboard route */}
+      <Route 
+        path="/dashboard" 
+        element={<DashboardPage />}
+      />
 
       {/* Tournament routes */}
       <Route path="/tournaments" element={<TournamentListPage />} />
@@ -68,6 +81,27 @@ function App() {
 
       {/* Leaderboard routes */}
       <Route path="/tournaments/:tournamentId/leaderboard" element={<LeaderboardPage />} />
+
+      {/* Profile & Settings routes */}
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Fallback route */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

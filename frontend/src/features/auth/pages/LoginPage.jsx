@@ -5,10 +5,15 @@ import '../styles/LoginPage.css';
 import Input from '../../../shared/components/Input';
 import Button from '../../../shared/components/Button';
 import { login } from '../api/authApi';
+import { useAuth } from '../../../shared/context/AuthContext';
 import Logo from '../../../assets/Logo.svg';
 
 export default function LoginPage() {
+  // This runs on component mount - should always execute
+  window.loginPageMounted = true;
+  
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
 
@@ -18,6 +23,8 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    window.loginAttempt = (window.loginAttempt || 0) + 1;
+    console.log('[LoginPage] handleLogin called, attempt #' + window.loginAttempt);
 
     if (!form.email || !form.password) {
       toast.warn('Email and password are required');
@@ -26,12 +33,30 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await login({ email: form.email, password: form.password });
+      const response = await login({ email: form.email, password: form.password });
+      console.log('[LoginPage] Login response:', response);
+      console.log('[LoginPage] User data:', response.user);
+      console.log('[LoginPage] Tokens:', {
+        accessToken: localStorage.getItem('accessToken'),
+        refreshToken: localStorage.getItem('refreshToken')
+      });
+      
+      console.log('[LoginPage] Response received:', response);
+      authLogin(response.user);
+      console.log('[LoginPage] Auth context updated');
+      
+      // Log something to window object to detect execution
+      window.lastLoginTime = new Date().toISOString();
+      
       toast.success('Welcome back!');
+      
+      // Try navigating using navigate() from react-router
+      console.log('[LoginPage] Attempting navigation via navigate() hook');
       navigate('/dashboard');
     } catch (err) {
       const message = err.response?.data?.message ?? err.message ?? 'Login failed';
       toast.error(message);
+      console.error('[LoginPage] Login error:', err);
     } finally {
       setLoading(false);
     }

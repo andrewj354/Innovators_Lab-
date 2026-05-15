@@ -84,6 +84,8 @@ export default function RegisterStep2Page() {
   const isFormFilled = form.firstName && form.lastName && form.dateOfBirth;
   const hasErrors = Object.values(errors).some((e) => e);
 
+  // RegisterStep2Page.js
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -100,11 +102,16 @@ export default function RegisterStep2Page() {
     setLoading(true);
 
     try {
+      // ТУТ ВАЖЛИВА ПРАВКА:
+      // Перетворюємо дані у формат, який розуміє Django (snake_case)
       const registrationData = {
-        ...step1Data,
-        firstName: form.firstName,
-        lastName: form.lastName,
-        dateOfBirth: form.dateOfBirth,
+        username: step1Data.username,
+        email: step1Data.email,
+        password: step1Data.password,
+        password_confirm: step1Data.password, // Додаємо підтвердження (копія пароля)
+        first_name: form.firstName,           // firstName -> first_name
+        last_name: form.lastName,             // lastName -> last_name
+        date_of_birth: form.dateOfBirth,      // dateOfBirth -> date_of_birth
       };
 
       await register(registrationData);
@@ -113,8 +120,16 @@ export default function RegisterStep2Page() {
         state: { email: step1Data.email },
       });
     } catch (err) {
-      const message = err.response?.data?.message || err.message || 'Registration failed';
-      toast.error(message);
+      // Витягуємо конкретну помилку з сервера, якщо вона є
+      const serverErrors = err.response?.data;
+      if (serverErrors) {
+        // Якщо сервер повернув об'єкт з помилками полів, виведемо першу ліпшу
+        const firstErrorField = Object.keys(serverErrors)[0];
+        const message = `${firstErrorField}: ${serverErrors[firstErrorField][0]}`;
+        toast.error(message);
+      } else {
+        toast.error(err.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }

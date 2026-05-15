@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: innovators_db
+      POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
@@ -42,14 +42,18 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: innovators_gateway
-    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     environment:
       - DEBUG=True
+      - SECRET_KEY=django-insecure-innovators-lab-shared-secret-key-2024
       - DJANGO_SETTINGS_MODULE=config.settings
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/innovators_db
+      - DB_HOST=postgres
+      - DB_NAME=gateway_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/0
+      - ALLOWED_HOSTS=localhost,127.0.0.1,api-gateway,0.0.0.0,gateway
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,14 +75,18 @@ services:
       context: ./services/user-service
       dockerfile: Dockerfile
     container_name: innovators_user_service
-    command: python manage.py runserver 0.0.0.0:8001
     ports:
       - "8001:8001"
     environment:
       - DEBUG=True
+      - SECRET_KEY=django-insecure-innovators-lab-shared-secret-key-2024
       - DJANGO_SETTINGS_MODULE=config.settings
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/user_db
+      - DB_HOST=postgres
+      - DB_NAME=user_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/1
+      - ALLOWED_HOSTS=localhost,127.0.0.1,user-service,0.0.0.0
     depends_on:
       postgres:
         condition: service_healthy
@@ -100,14 +108,18 @@ services:
       context: ./services/tournament-service
       dockerfile: Dockerfile
     container_name: innovators_tournament_service
-    command: python manage.py runserver 0.0.0.0:8003
     ports:
       - "8003:8003"
     environment:
       - DEBUG=True
+      - SECRET_KEY=django-insecure-innovators-lab-shared-secret-key-2024
       - DJANGO_SETTINGS_MODULE=config.settings
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tournament_db
+      - DB_HOST=postgres
+      - DB_NAME=tournament_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/2
+      - ALLOWED_HOSTS=localhost,127.0.0.1,tournament-service,0.0.0.0
     depends_on:
       postgres:
         condition: service_healthy
@@ -123,31 +135,35 @@ services:
       timeout: 10s
       retries: 3
 
-  # Submission Service (Port 8002)
-  submission-service:
+  # Task Service (Port 8002)
+  task-service:
     build:
-      context: ./services/submission-service
+      context: ./services/task-service
       dockerfile: Dockerfile
-    container_name: innovators_submission_service
-    command: python manage.py runserver 0.0.0.0:8002
+    container_name: innovators_task_service
     ports:
       - "8002:8002"
     environment:
       - DEBUG=True
+      - SECRET_KEY=django-insecure-innovators-lab-shared-secret-key-2024
       - DJANGO_SETTINGS_MODULE=config.settings
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/submission_db
+      - DB_HOST=postgres
+      - DB_NAME=task_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - REDIS_URL=redis://redis:6379/3
+      - ALLOWED_HOSTS=localhost,127.0.0.1,task-service,0.0.0.0
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
-      - ./services/submission-service:/app
+      - ./services/task-service:/app
     networks:
       - innovators_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/api/tasks/health/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8002/api/health/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -158,11 +174,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: innovators_frontend
-    command: npm run dev
     ports:
       - "3000:3000"
+      - "5173:5173"
     environment:
-      - VITE_API_URL=http://api-gateway:8000
+      - VITE_API_URL=http://localhost:8000
+      - VITE_API_GATEWAY_URL=http://localhost:8000
     depends_on:
       - api-gateway
     volumes:

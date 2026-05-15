@@ -4,9 +4,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'api-gateway-secret-key-change-in-production'
-DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+SECRET_KEY = os.environ.get('SECRET_KEY', 'api-gateway-secret-key-change-in-production')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -58,10 +58,15 @@ TEMPLATES = [
     },
 ]
 
+# Database Configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR.parent / 'databases' / 'gateway.db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'gateway_db'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
@@ -77,9 +82,13 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 LANGUAGE_CODE = 'en-us'
@@ -92,10 +101,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Service URLs
 MICROSERVICES = {
-    'user-service': 'http://localhost:8001',
-    'task-service': 'http://localhost:8002',
-    'tournament-service': 'http://localhost:8003',
-    'rank-service': 'http://localhost:8002',  # Same as task-service (consolidated)
+    'user-service': 'http://user-service:8001',
+    'task-service': 'http://task-service:8002',
+    'tournament-service': 'http://tournament-service:8003',
+    'rank-service': 'http://task-service:8002',  # Temporary: rank-service combined with task-service
 }
 
 # Rate limiting settings

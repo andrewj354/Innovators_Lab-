@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    two_fa_enabled = models.BooleanField(default=False)
+    two_fa_secret = models.CharField(max_length=32, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
@@ -19,3 +22,16 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Profile of {self.user.email}"
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    def is_valid(self):
+        return not self.is_used and timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"Reset token for {self.user.email}"

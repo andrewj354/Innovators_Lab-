@@ -1,13 +1,14 @@
 import client from './client';
 
 /**
- * Отримати список подач для завдання
- * @param {number} taskId - ID завдання
+ * Отримати список подач для завдання або команди
+ * @param {number} taskId - ID завдання (опціонально)
  * @param {number} teamId - ID команди (опціонально)
  * @param {boolean} isLocked - фільтр за блокуванням (опціонально)
  */
-export const getSubmissions = (taskId, teamId = null, isLocked = null) => {
-  const params = { task: taskId };
+export const getSubmissions = (taskId = null, teamId = null, isLocked = null) => {
+  const params = {};
+  if (taskId) params.task = taskId;
   if (teamId) params.team_id = teamId;
   if (isLocked !== null) params.is_locked = isLocked;
   return client.get('/submissions/', { params });
